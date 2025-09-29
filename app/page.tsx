@@ -314,6 +314,7 @@ const ChatBotDemo = () => {
                 iconOnly={true}
                 defaultIcon={DatabaseIcon}
                 emptyTooltip='Select sources'
+                maxSelectable={3}
               />
               <MultiSelect
                 options={channels}
@@ -325,6 +326,7 @@ const ChatBotDemo = () => {
                 iconOnly={true}
                 defaultIcon={MegaphoneIcon}
                 emptyTooltip='Select channels'
+                maxSelectable={4}
               />
             </PromptInputTools>
             <PromptInputSubmit disabled={!input && !status} status={status} />

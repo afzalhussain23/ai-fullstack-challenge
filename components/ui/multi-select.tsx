@@ -291,6 +291,12 @@ interface MultiSelectProps
    * Useful to prompt actions like "Set sources" or "Set channels".
    */
   emptyTooltip?: string;
+
+  /**
+   * Maximum number of selectable options. When the limit is reached,
+   * any remaining unselected options become disabled until an item is deselected.
+   */
+  maxSelectable?: number;
 }
 
 /**
@@ -349,6 +355,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       iconOnly = false,
       defaultIcon: DefaultIcon,
       emptyTooltip,
+      maxSelectable,
       ...props
     },
     ref,
@@ -639,7 +646,19 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       if (disabled) return;
       const option = getOptionByValue(optionValue);
       if (option?.disabled) return;
-      const newSelectedValues = selectedValues.includes(optionValue)
+      const isAlreadySelected = selectedValues.includes(optionValue);
+      const selectionLimitReached =
+        typeof maxSelectable === 'number' &&
+        selectedValues.length >= maxSelectable;
+      if (!isAlreadySelected && selectionLimitReached) {
+        // Prevent selecting more than the allowed limit
+        announce(
+          `Selection limit of ${maxSelectable} reached. Deselect an item to choose another.`,
+          'assertive',
+        );
+        return;
+      }
+      const newSelectedValues = isAlreadySelected
         ? selectedValues.filter((value) => value !== optionValue)
         : [...selectedValues, optionValue];
       setSelectedValues(newSelectedValues);
@@ -1310,22 +1329,30 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                         const isSelected = selectedValues.includes(
                           option.value,
                         );
+                        const selectionLimitReached =
+                          typeof maxSelectable === 'number' &&
+                          selectedValues.length >= maxSelectable;
+                        const isDisabled =
+                          !!option.disabled ||
+                          (!isSelected && selectionLimitReached);
                         return (
                           <CommandItem
                             key={option.value}
-                            onSelect={() => toggleOption(option.value)}
+                            onSelect={() => {
+                              if (isDisabled) return;
+                              toggleOption(option.value);
+                            }}
                             role='option'
                             aria-selected={isSelected}
-                            aria-disabled={option.disabled}
+                            aria-disabled={isDisabled}
                             aria-label={`${option.label}${
                               isSelected ? ', selected' : ', not selected'
-                            }${option.disabled ? ', disabled' : ''}`}
+                            }${isDisabled ? ', disabled' : ''}`}
                             className={cn(
                               'cursor-pointer flex items-center justify-between',
-                              option.disabled &&
-                                'opacity-50 cursor-not-allowed',
+                              isDisabled && 'opacity-50 cursor-not-allowed',
                             )}
-                            disabled={option.disabled}
+                            disabled={isDisabled}
                           >
                             <div className='flex items-center'>
                               {option.icon && (
@@ -1338,8 +1365,11 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                             </div>
                             <Switch
                               checked={isSelected}
-                              onCheckedChange={() => toggleOption(option.value)}
-                              disabled={option.disabled}
+                              onCheckedChange={() => {
+                                if (isDisabled && !isSelected) return;
+                                toggleOption(option.value);
+                              }}
+                              disabled={isDisabled}
                               className='ml-2'
                               aria-hidden='true'
                             />
@@ -1352,21 +1382,30 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   <CommandGroup>
                     {filteredOptions.map((option) => {
                       const isSelected = selectedValues.includes(option.value);
+                      const selectionLimitReached =
+                        typeof maxSelectable === 'number' &&
+                        selectedValues.length >= maxSelectable;
+                      const isDisabled =
+                        !!option.disabled ||
+                        (!isSelected && selectionLimitReached);
                       return (
                         <CommandItem
                           key={option.value}
-                          onSelect={() => toggleOption(option.value)}
+                          onSelect={() => {
+                            if (isDisabled) return;
+                            toggleOption(option.value);
+                          }}
                           role='option'
                           aria-selected={isSelected}
-                          aria-disabled={option.disabled}
+                          aria-disabled={isDisabled}
                           aria-label={`${option.label}${
                             isSelected ? ', selected' : ', not selected'
-                          }${option.disabled ? ', disabled' : ''}`}
+                          }${isDisabled ? ', disabled' : ''}`}
                           className={cn(
                             'cursor-pointer flex items-center justify-between',
-                            option.disabled && 'opacity-50 cursor-not-allowed',
+                            isDisabled && 'opacity-50 cursor-not-allowed',
                           )}
-                          disabled={option.disabled}
+                          disabled={isDisabled}
                         >
                           <div className='flex items-center'>
                             {option.icon && (
@@ -1379,8 +1418,11 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                           </div>
                           <Switch
                             checked={isSelected}
-                            onCheckedChange={() => toggleOption(option.value)}
-                            disabled={option.disabled}
+                            onCheckedChange={() => {
+                              if (isDisabled && !isSelected) return;
+                              toggleOption(option.value);
+                            }}
+                            disabled={isDisabled}
                             className='ml-2'
                             aria-hidden='true'
                           />
