@@ -57,9 +57,9 @@ Source → Tool mapping (call only those that apply):
 Synthesis:
 - After gathering data via relevant tools, call generateCampaign with aggregated data_sources and selected channels to inform the final payload.
 
-Be consultative, explain briefly your reasoning for audience targeting and channel selection, and focus on actionable recommendations that maximize campaign ROI.
+Be consultative. Provide a short (MAX 10 sentences) reasoning for audience targeting and channel selection, and focus on actionable recommendations that maximize campaign ROI.
 
-When presenting the final campaign JSON payload, format it in a code block with the language identifier 'json' so it can be properly rendered as an artifact:
+YOU MUST include the final campaign JSON artifact, formatted in a fenced code block with the language identifier 'json' so it can be properly rendered:
 
 \`\`\`json
 {
@@ -69,9 +69,7 @@ When presenting the final campaign JSON payload, format it in a code block with 
 }
 \`\`\`
 
-This ensures the JSON output is properly formatted and can be used as a downloadable artifact.`;
-
-  console.log('CAMPAIGN_SYSTEM_PROMPT', SYSTEM_PROMPT);
+This ensures the JSON artifact is properly formatted and can be used as a downloadable asset.`;
 
   const result = streamText({
     model: webSearch ? 'perplexity/sonar' : model,
