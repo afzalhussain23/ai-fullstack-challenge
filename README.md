@@ -1,4 +1,5 @@
 ## Perplexity-style Marketing Automation
+[Live preview](https://ai-fullstack-challenge.vercel.app/)
 
 A chat interface similar to Perplexity that serves as a marketing automation platform. The system should help users create targeted campaigns by connecting data sources and selecting communication channels.
 
@@ -31,9 +32,7 @@ Open `http://localhost:3000`.
 ---
 
 ## Demo Video
-Add your demo link or embed here.
-
-- Placeholder: `[Watch the demo](https://example.com/your-video)`
+- [Watch the demo](https://drive.google.com/file/d/1bQVEWK3yyV4Oybvv6jHQvZcVvz-6ifX_/view?usp=sharing)
 
 ---
 
